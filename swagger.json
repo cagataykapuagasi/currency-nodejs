@@ -1,0 +1,43 @@
+
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Blah",
+    "description": "",
+    "version": "1.0"
+  },
+  "produces": ["application/json"],
+  "paths": {
+    "/api/currency": {
+      "post": {
+        "x-swagger-router-controller": "home",
+        "operationId": "post",
+        "tags": ["currency"],
+        "description": "Enter two country iso tag",
+        "parameters": [
+      { "name": "iso1", "in": "json", "required": true, "type": "string", "example": "tr" },
+      { "name": "iso2", "in": "json", "type": "string", "required": true, "example": "usa" }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "examples": {
+              "application/json": {
+                "currency": "USD / TRY",
+                "rate": 8.428111853501608
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value",
+            "examples": {
+              "application/json": {
+                "message": "The iso not found"
+              }
+            }
+          }
+        }
+      }
+    }
+   
+  }
+}

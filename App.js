@@ -5,9 +5,13 @@ const server = require("http").createServer(app);
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 8080;
 const Api = require("./routes");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use("/api", Api);
 
