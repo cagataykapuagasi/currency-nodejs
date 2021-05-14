@@ -15,9 +15,19 @@ async function getCurrency(req, res, next) {
       query: { iso1, iso2 },
     } = req;
 
+    if (!iso1) {
+      return res.status(400).send({ message: "the iso1 is required" });
+    }
+
+    if (!iso2) {
+      return res.status(400).send({ message: "the iso2 is required" });
+    }
+
     soap.createClient(url, function (err, client) {
       if (!client) {
-        return res.send({ message: "Swagger can't using with soap" });
+        return res
+          .status(400)
+          .send({ message: "Swagger can't using with soap" });
       }
 
       client.CountryCurrency(
@@ -85,6 +95,14 @@ async function getCurrencyPost(req, res, next) {
     const {
       body: { iso1, iso2 },
     } = req;
+
+    if (!iso1) {
+      return res.status(400).send({ message: "the iso1 is required" });
+    }
+
+    if (!iso2) {
+      return res.status(400).send({ message: "the iso2 is required" });
+    }
 
     soap.createClient(url, function (err, client) {
       if (!client) {
