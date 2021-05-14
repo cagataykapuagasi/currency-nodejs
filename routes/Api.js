@@ -30,15 +30,19 @@ async function getCurrency(req, res, next) {
           .send({ message: "Swagger can't using with soap" });
       }
 
+      //soap CountryCurrency service for iso1 and iso2
       client.CountryCurrency(
         { sCountryISOCode: iso1.toUpperCase() },
         function (err, { CountryCurrencyResult }) {
           client.CountryCurrency(
             { sCountryISOCode: iso2.toUpperCase() },
             function (err, { CountryCurrencyResult: CountryCurrencyResult2 }) {
+              //convert xml to json
               xmlToJson(url, function (data) {
+                //countries in json
                 const countries = data["gesmes:Envelope"].Cube[0].Cube[0].Cube;
 
+                //check if currency type EUR. if type is EUR define rate 1
                 let iso1Currency, iso2Currency;
                 if (
                   CountryCurrencyResult.sISOCode === "EUR" &&
@@ -48,6 +52,7 @@ async function getCurrency(req, res, next) {
                   iso2Currency = { $: { currency: "EUR", rate: 1 } };
                 } else if (CountryCurrencyResult.sISOCode === "EUR") {
                   iso1Currency = { $: { currency: "EUR", rate: 1 } };
+                  //find currency from xml list
                   iso2Currency = countries.find(
                     (x) => x["$"].currency === CountryCurrencyResult2.sISOCode
                   );
@@ -70,6 +75,7 @@ async function getCurrency(req, res, next) {
                   return res.status(400).send({ message: "The iso not found" });
                 }
 
+                //calculate currency rate
                 const rate = {
                   currency:
                     iso1Currency["$"].currency +
@@ -90,6 +96,7 @@ async function getCurrency(req, res, next) {
   }
 }
 
+//same func for post method
 async function getCurrencyPost(req, res, next) {
   try {
     const {
@@ -171,6 +178,7 @@ async function getCurrencyPost(req, res, next) {
 
 module.exports = router;
 
+//convert xml to json format
 function xmlToJson(url, callback) {
   var url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 
@@ -181,6 +189,7 @@ function xmlToJson(url, callback) {
       xml += chunk;
     });
 
+    //parse json library
     res.on("end", function () {
       parseString(xml, function (err, result) {
         callback(result);
